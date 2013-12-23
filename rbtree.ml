@@ -7,15 +7,14 @@ let rec member x = function
   | Node (_, y, left, right) ->
       x = y || x < y && member x left || x > y && member x right
 
-let balance = function
-  | Node (Black, z, Node (Red, y, Node (Red, x, a, b), c), d)
-  | Node (Black, z, Node (Red, x, a, Node (Red, y, b, c)), d)
-  | Node (Black, x, a, Node (Red, z, Node (Red, y, b, c), d))
-  | Node (Black, x, a, Node (Red, y, b, Node (Red, z, c, d))) ->
-      Node (Red, y, Node (Black, x, a, b), Node (Black, z, c, d))
-  | balanced -> balanced
-
 let insert x t =
+  let balance = function
+    | Node (Black, z, Node (Red, y, Node (Red, x, a, b), c), d)
+    | Node (Black, z, Node (Red, x, a, Node (Red, y, b, c)), d)
+    | Node (Black, x, a, Node (Red, z, Node (Red, y, b, c), d))
+    | Node (Black, x, a, Node (Red, y, b, Node (Red, z, c, d))) ->
+        Node (Red, y, Node (Black, x, a, b), Node (Black, z, c, d))
+    | balanced -> balanced in
   let rec ins = function
     | Leaf -> Node (Red, x, Leaf, Leaf)
     | Node (color, y, left, right) as t ->
@@ -29,6 +28,27 @@ let insert x t =
 
 let construct =
   List.fold_left ~init: Leaf ~f: (fun tree value -> insert value tree)
+
+let rec find_min = function
+  | Leaf -> failwith "apply find_min on a Leaf"
+  | Node (_, y, Leaf, _) -> y
+  | Node (_, _, left, _) -> find_min left
+
+let rec find_max = function
+  | Leaf -> failwith "apply find_max on a Leaf"
+  | Node (_, y, _, Leaf) -> y
+  | Node (_, _, _, right) -> find_max right
+
+(*
+let remove x t =
+  let rec find_by_index = function
+    | Leaf -> None
+    | Node (_, y, left, right) as t ->
+        if x = y then Some t
+        else if x < y then find_by_index left
+        else find_by_index right in
+  let remove_index
+*)
 
 (* tests *)
 
